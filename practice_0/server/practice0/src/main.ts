@@ -15,6 +15,8 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors()
+
   const swaggerOptions = new DocumentBuilder()
     .setTitle('Building Manager')
     .setDescription('A manager of buildings')
@@ -24,6 +26,6 @@ async function bootstrap() {
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerOptions);
   SwaggerModule.setup('swagger', app, swaggerDocument);
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();

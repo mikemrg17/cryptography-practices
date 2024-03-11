@@ -7,7 +7,7 @@ import { Readable } from 'stream';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) { }
 
   @Get()
   getHello(): string {
@@ -27,36 +27,36 @@ export class AppController {
     )
     file: Express.Multer.File,
     @Res() response: Response
-    ){
-      response.contentType('text/plain');
-      response.attachment(this.appService.addExtenstion(file.originalname , '_C'));
+  ) {
+    response.contentType('text/plain');
+    response.attachment(this.appService.addExtenstion(file.originalname, '_C'));
 
-      const buffer = await this.appService.encryptFile(encryptDecryptDto, file);
-      const stream = Readable.from(buffer);
+    const buffer = await this.appService.encryptFile(encryptDecryptDto, file);
+    const stream = Readable.from(buffer);
 
-      stream.pipe(response);
-    }
+    stream.pipe(response);
+  }
 
-    @Post('/decrypt')
-    @UseInterceptors(FileInterceptor('file'))
-    async decrypt(
-      @Body() encryptDecryptDto: EncryptDecryptDto,
-      @UploadedFile(
-        new ParseFilePipe({
-          validators: [
-            new FileTypeValidator({ fileType: 'text/plain' })
-          ]
-        }),
-      )
-      file: Express.Multer.File,
-      @Res() response: Response
-      ){
-        response.contentType('text/plain');
-        response.attachment(this.appService.addExtenstion(file.originalname , '_D'));
-  
-        const buffer = await this.appService.decryptFile(encryptDecryptDto, file);
-        const stream = Readable.from(buffer);
-  
-        stream.pipe(response);
-      }
+  @Post('/decrypt')
+  @UseInterceptors(FileInterceptor('file'))
+  async decrypt(
+    @Body() encryptDecryptDto: EncryptDecryptDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: 'text/plain' })
+        ]
+      }),
+    )
+    file: Express.Multer.File,
+    @Res() response: Response
+  ) {
+    response.contentType('text/plain');
+    response.attachment(this.appService.addExtenstion(file.originalname, '_D'));
+
+    const buffer = await this.appService.decryptFile(encryptDecryptDto, file);
+    const stream = Readable.from(buffer);
+
+    stream.pipe(response);
+  }
 }
