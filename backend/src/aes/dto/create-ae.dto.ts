@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class EncryptDecryptDto {
+export class CreateAeDto {
   @IsNotEmpty()
   @IsString()
   password!: string

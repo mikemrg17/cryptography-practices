@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { EncryptDecryptDto } from './dto/encrypt-decrypt.dto';
+import { CreateAeDto } from './dto/create-ae.dto';
+import { UpdateAeDto } from './dto/update-ae.dto';
 import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
-
+import { Express } from 'express'
 
 @Injectable()
-export class AppService {
-
+export class AesService {
   algorithm: string = 'aes-256-ctr';
   iv = randomBytes(16);
 
@@ -14,7 +14,7 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async encryptFile(encryptDecryptDto: EncryptDecryptDto, file: Express.Multer.File): Promise<Buffer> {
+  async encryptFile(encryptDecryptDto: CreateAeDto, file: Express.Multer.File): Promise<Buffer> {
     const key = (await promisify(scrypt)(encryptDecryptDto.password, 'salt', 32)) as Buffer;
     const cipher = createCipheriv(this.algorithm, key, this.iv);
 
@@ -28,7 +28,7 @@ export class AppService {
 
   }
 
-  async decryptFile(encryptDecryptDto: EncryptDecryptDto, file: Express.Multer.File): Promise<Buffer> {
+  async decryptFile(encryptDecryptDto: CreateAeDto, file: Express.Multer.File): Promise<Buffer> {
     const key = (await promisify(scrypt)(encryptDecryptDto.password, 'salt', 32)) as Buffer;
     const decipher = createDecipheriv(this.algorithm, key, this.iv);
 

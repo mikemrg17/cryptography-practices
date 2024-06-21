@@ -1,23 +1,20 @@
-import { Controller, Get, Post, Body, UploadedFile, ParseFilePipe, FileTypeValidator, UseInterceptors, Res } from '@nestjs/common';
-import { AppService } from './app.service';
-import { EncryptDecryptDto } from './dto/encrypt-decrypt.dto';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, Res } from '@nestjs/common';
+import { AesService } from './aes.service';
+import { CreateAeDto } from './dto/create-ae.dto';
+import { UpdateAeDto } from './dto/update-ae.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Readable } from 'stream';
 
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) { }
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+@Controller('aes')
+export class AesController {
+  constructor(private readonly aesService: AesService) {}
 
   @Post('/encrypt')
   @UseInterceptors(FileInterceptor('file'))
   async encrypt(
-    @Body() encryptDecryptDto: EncryptDecryptDto,
+    @Body() encryptDecryptDto: CreateAeDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -29,9 +26,9 @@ export class AppController {
     @Res() response: Response
   ) {
     response.contentType('text/plain');
-    response.attachment(this.appService.addExtenstion(file.originalname, '_C'));
+    response.attachment(this.aesService.addExtenstion(file.originalname, '_C'));
 
-    const buffer = await this.appService.encryptFile(encryptDecryptDto, file);
+    const buffer = await this.aesService.encryptFile(encryptDecryptDto, file);
     const stream = Readable.from(buffer);
 
     stream.pipe(response);
@@ -40,7 +37,7 @@ export class AppController {
   @Post('/decrypt')
   @UseInterceptors(FileInterceptor('file'))
   async decrypt(
-    @Body() encryptDecryptDto: EncryptDecryptDto,
+    @Body() encryptDecryptDto: CreateAeDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -52,9 +49,9 @@ export class AppController {
     @Res() response: Response
   ) {
     response.contentType('text/plain');
-    response.attachment(this.appService.addExtenstion(file.originalname, '_D'));
+    response.attachment(this.aesService.addExtenstion(file.originalname, '_D'));
 
-    const buffer = await this.appService.decryptFile(encryptDecryptDto, file);
+    const buffer = await this.aesService.decryptFile(encryptDecryptDto, file);
     const stream = Readable.from(buffer);
 
     stream.pipe(response);
