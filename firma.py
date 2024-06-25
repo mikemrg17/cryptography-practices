@@ -6,27 +6,6 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 import hashlib
 
-# Función para guardar la clave privada en un archivo PEM
-def guardar_clave_privada(clave_privada, nombre_archivo):
-    with open(nombre_archivo, 'wb') as archivo_clave_privada:
-        archivo_clave_privada.write(
-            clave_privada.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.NoEncryption()
-            )
-        )
-
-# Función para guardar la clave pública en un archivo PEM
-def guardar_clave_publica(clave_publica, nombre_archivo):
-    with open(nombre_archivo, 'wb') as archivo_clave_publica:
-        archivo_clave_publica.write(
-            clave_publica.public_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
-            )
-        )
-
 # Función para leer una clave privada desde un archivo PEM
 def cargar_clave_privada_desde_archivo(ruta_archivo):
     with open(ruta_archivo, 'rb') as archivo_clave_privada:
