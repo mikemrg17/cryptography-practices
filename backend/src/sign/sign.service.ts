@@ -83,7 +83,7 @@ export class SignService {
       text = files[1].buffer.toString().replace(signature+'\n', '')
     }else{
       signature = files[0].buffer.toString().split('\n')[0];
-      text = files[1].buffer.toString().replace(signature+'\n', '')
+      text = files[0].buffer.toString().replace(signature+'\n', '')
     }
 
     if (!key.verify(text, signature, 'utf8', 'base64')){
