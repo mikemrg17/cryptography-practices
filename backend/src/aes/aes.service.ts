@@ -6,10 +6,6 @@ import { CreateAeDto } from './dto/create-ae.dto';
 @Injectable()
 export class AesService {
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-
   async encryptFile(encryptDecryptDto: CreateAeDto, file: Express.Multer.File): Promise<Buffer> {
     return CryptoJS.AES.encrypt(file.buffer.toString(), encryptDecryptDto.password).toString();
   }
