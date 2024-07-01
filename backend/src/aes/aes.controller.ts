@@ -1,7 +1,6 @@
 import { Controller, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, Res } from '@nestjs/common';
 import { AesService } from './aes.service';
 import { CreateAeDto } from './dto/create-ae.dto';
-import { UpdateAeDto } from './dto/update-ae.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Readable } from 'stream';

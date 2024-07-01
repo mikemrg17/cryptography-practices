@@ -1,46 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAeDto } from './dto/create-ae.dto';
-import { UpdateAeDto } from './dto/update-ae.dto';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
 import { Express } from 'express'
+import * as CryptoJS from 'crypto-js';
+import { CreateAeDto } from './dto/create-ae.dto';
 
 @Injectable()
 export class AesService {
-  algorithm: string = 'aes-256-ctr';
-  iv = randomBytes(16);
 
   getHello(): string {
     return 'Hello World!';
   }
 
   async encryptFile(encryptDecryptDto: CreateAeDto, file: Express.Multer.File): Promise<Buffer> {
-    const key = (await promisify(scrypt)(encryptDecryptDto.password, 'salt', 32)) as Buffer;
-    const cipher = createCipheriv(this.algorithm, key, this.iv);
-
-    const textToEncrypt = file.buffer;
-    const encryptedText = Buffer.concat([
-      cipher.update(textToEncrypt),
-      cipher.final(),
-    ]);
-
-    return encryptedText;
-
+    return CryptoJS.AES.encrypt(file.buffer.toString(), encryptDecryptDto.password).toString();
   }
 
   async decryptFile(encryptDecryptDto: CreateAeDto, file: Express.Multer.File): Promise<Buffer> {
-    const key = (await promisify(scrypt)(encryptDecryptDto.password, 'salt', 32)) as Buffer;
-    const decipher = createDecipheriv(this.algorithm, key, this.iv);
-
-    const textToDechiper = file.buffer;
-    const decryptedText = Buffer.concat([
-      decipher.update(textToDechiper),
-      decipher.final(),
-    ]);
-    
-
-    return decryptedText;
-
+    return CryptoJS.AES.decrypt(file.buffer.toString(), encryptDecryptDto.password).toString(CryptoJS.enc.Utf8);
   }
 
   addExtenstion(filename: string, extension: string): string {
