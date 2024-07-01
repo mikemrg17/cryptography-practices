@@ -29,23 +29,4 @@ export class SignController {
   verify(@UploadedFiles() files: Array<Express.Multer.File>){
     return this.signService.verify(files);
   }
-  // @Get()
-  // findAll() {
-  //   return this.signService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.signService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSignDto: UpdateSignDto) {
-  //   return this.signService.update(+id, updateSignDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.signService.remove(+id);
-  // }
 }

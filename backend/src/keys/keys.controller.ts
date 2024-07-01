@@ -23,7 +23,7 @@ export class KeysController {
       'Content-Length': buffer.length
     });
     stream.pipe(response);
-    // fs.rmSync('keys.zip');
+    
   }
 
 }
