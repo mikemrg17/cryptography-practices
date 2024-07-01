@@ -13,17 +13,13 @@ export class KeysController {
   generateKeys(
     @Res() response: Response
   ) {
-    this.keysService.generateKeys();
-
-    const buffer = fs.readFileSync('keys.zip');
- 
-    const stream = Readable.from(buffer);
+    const buffer = this.keysService.generateKeys();
     response.writeHead(200, {
       'Content-Type': 'application/zip',
       'Content-Length': buffer.length
     });
+    const stream = Readable.from(buffer);
     stream.pipe(response);
-    
   }
 
 }
