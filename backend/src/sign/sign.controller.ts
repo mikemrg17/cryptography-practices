@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, BadRequestException, Res } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFiles, Res, HttpCode } from '@nestjs/common';
 import { SignService } from './sign.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
@@ -24,6 +24,7 @@ export class SignController {
   }
 
   @Post('verify')
+  @HttpCode(200)
   @UseInterceptors(FilesInterceptor('files'))
   verify(@UploadedFiles() files: Array<Express.Multer.File>){
     return this.signService.verify(files);
