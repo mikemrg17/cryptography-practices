@@ -32,18 +32,16 @@ export class SignService {
     if (!key.isPrivate()) {
       throw new BadRequestException('Invalid private key');
     }
-
-    let sign = '';
+    
+    let buffer = Buffer.from('');
 
     if(index === 0){
-      sign = key.sign(files[1].buffer).toString('base64');
-      sign += '\n';
-      sign += files[1].buffer.toString();
-    }else{
-      sign = key.sign(files[0].buffer).toString('base64');
-      sign += '\n';
-      sign += files[0].buffer.toString();
+      buffer = files[1].buffer;
+    } else {
+      buffer = files[0].buffer;
     }
+
+    const sign = key.sign(buffer, 'base64', 'utf8') + '\n' + buffer.toString();
 
     return Buffer.from(sign);
   }
@@ -62,11 +60,7 @@ export class SignService {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const text = file.buffer.toString();
-      // if(text.includes('-----BEGIN PUBLIC KEY-----')){
-      //   index = i;
-      //   break;
-      // }
-      if(text.includes('-----BEGIN')){
+      if(text.includes('-----BEGIN PUBLIC KEY-----')){
         index = i;
         break;
       }
@@ -77,41 +71,27 @@ export class SignService {
     }
 
     const key = new NodeRSA(files[index].buffer.toString());
-    // if (!key.isPublic()) {
-    //   throw new BadRequestException('Invalid public key');
-    // }
+    if (!key.isPublic()) {
+      throw new BadRequestException('Invalid public key');
+    }
+  
+    let text = '';
+    let signature = '';
 
     if(index === 0){
-      const signature = files[1].buffer.toString().split('\n')[0];
-      const text = files[1].buffer.toString().replace(signature+'\n', '')
-      console.log(signature);
-      console.log(text);
-      return key.verify(text, signature, 'utf8', 'buffer');
+      signature = files[1].buffer.toString().split('\n')[0];
+      text = files[1].buffer.toString().replace(signature+'\n', '')
     }else{
-      const signature = files[0].buffer.toString().split('\n')[0];
-      const text = files[1].buffer.toString().replace(signature+'\n', '')
-      console.log(signature);
-      console.log(text);
-      return key.verify(text, signature, 'utf8', 'buffer');
+      signature = files[0].buffer.toString().split('\n')[0];
+      text = files[0].buffer.toString().replace(signature+'\n', '')
     }
+
+    if (!key.verify(text, signature, 'utf8', 'base64')){
+      throw new ForbiddenException('Invalid signature');
+    }
+
+    return 'Signature is valid';
+
   }
-  // create(createSignDto: CreateSignDto) {
-  //   return 'This action adds a new sign';
-  // }
 
-  // findAll() {
-  //   return `This action returns all sign`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} sign`;
-  // }
-
-  // update(id: number, updateSignDto: UpdateSignDto) {
-  //   return `This action updates a #${id} sign`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} sign`;
-  // }
 }
