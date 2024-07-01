@@ -47,7 +47,7 @@ export class DhController {
     const buffer =  this.dhService.generateSharedSecret(files);
     const stream = Readable.from(buffer);
     response.writeHead(200, {
-      'Content-Type': 'application/text',
+      'Content-Type': 'application/x-x509-ca-cert',
       'Content-Length': buffer.length
     });
     stream.pipe(response);
