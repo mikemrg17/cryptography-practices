@@ -467,7 +467,7 @@ export default function DiffieHellman() {
             </div>
             <div className="mt-3">
               <Button
-                onClick={decryptFile}
+                onClick={encryptFile}
                 color="primary"
                 variant="shadow"
                 size="sm"
