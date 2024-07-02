@@ -1,7 +1,7 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, Res } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, Res, UploadedFiles } from '@nestjs/common';
 import { AesService } from './aes.service';
 import { CreateAeDto } from './dto/create-ae.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Readable } from 'stream';
 
@@ -55,4 +55,28 @@ export class AesController {
 
     stream.pipe(response);
   }
+
+  @Post('/encrypt-pass-file')
+  @UseInterceptors(FilesInterceptor('files'))
+   encryptWithPassFile(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Res() response: Response
+  ) {
+    response.contentType('text/plain');
+    const buffer = this.aesService.encryptFileWithPassFile(files);
+    const stream = Readable.from(buffer);
+    stream.pipe(response);
+  }
+
+  @Post('/decrypt-pass-file')
+  @UseInterceptors(FilesInterceptor('files'))
+    decryptWithPassFile(
+      @UploadedFiles() files: Array<Express.Multer.File>,
+      @Res() response: Response
+    ) {
+      response.contentType('text/plain');
+      const buffer = this.aesService.decryptFileWithPassFile(files);
+      const stream = Readable.from(buffer);
+      stream.pipe(response);
+    }
 }

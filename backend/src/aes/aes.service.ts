@@ -18,4 +18,58 @@ export class AesService {
     const filenameSplited = filename.split('.');
     return filenameSplited[0] + extension + '.' +filenameSplited[1];
   }
+
+  encryptFileWithPassFile(files: Array<Express.Multer.File>){
+    let password = '';
+    let filecontent = '';
+    let count = 0;
+    let flag = false;
+
+    for (const file of files) {
+      if (file.mimetype === 'application/x-x509-ca-cert') {
+        password = file.buffer.toString();
+        count++;
+        flag = true;
+      } else{
+        filecontent = file.buffer.toString();
+        count++;
+      }
+    }
+
+    if (count !== 2) {
+      throw new Error('You must upload two files');
+    }
+    
+    if (!flag) {
+      throw new Error('You must upload a password file');
+    }
+    return CryptoJS.AES.encrypt(filecontent, password).toString();
+  }
+
+  decryptFileWithPassFile(files: Array<Express.Multer.File>){
+    let password = '';
+    let filecontent = '';
+    let count = 0;
+    let flag = false;
+
+    for (const file of files) {
+      if (file.mimetype === 'application/x-x509-ca-cert') {
+        password = file.buffer.toString();
+        count++;
+        flag = true;
+      } else{
+        filecontent = file.buffer.toString();
+        count++;
+      }
+    }
+
+    if (count !== 2) {
+      throw new Error('You must upload two files');
+    }
+    
+    if (!flag) {
+      throw new Error('You must upload a password file');
+    }
+    return CryptoJS.AES.decrypt(filecontent, password).toString(CryptoJS.enc.Utf8);
+  }
 }
